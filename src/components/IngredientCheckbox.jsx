@@ -6,21 +6,28 @@ function IngredientCheckbox({ foodType, food, toggleFinishButton, i }) {
 
   const [checked, setChecked] = useState(false);
 
+  const handleCheckboxChange = () => {
+    toggleFinishButton();
+    setChecked(!checked);
+  };
+
+  const riskedIngredientStyle = { textDecoration: 'line-through' };
+
   if (foodType === 'meal') {
     return (
       <label
         htmlFor={ `strIngredient${i}` }
         data-testid="ingredient-step"
+        key={ food[`strIngredient${i}`] }
+        style={ checked ? riskedIngredientStyle : {} }
+
       >
         {food[`strIngredient${i}`]}
         {food[`strMeasure${i}`]}
         <input
           id={ `strIngredient${i}` }
           data-testid={ `${i - ONE}-ingredient-name-and-measure` }
-          onClick={ (e) => {
-            toggleFinishButton(e);
-            setChecked(!checked);
-          } }
+          onClick={ handleCheckboxChange }
           className="ingredient-checkbox"
           value={ checked }
           type="checkbox"
@@ -33,6 +40,7 @@ function IngredientCheckbox({ foodType, food, toggleFinishButton, i }) {
       htmlFor={ `strIngredient${i}` }
       key={ food[`strIngredient${i}`] }
       data-testid="ingredient-step"
+      style={ checked ? { textDecoration: 'line-through' } : {} }
     >
       {food[`strIngredient${i}`]}
       {food[`strMeasure${i}`]}
@@ -42,6 +50,7 @@ function IngredientCheckbox({ foodType, food, toggleFinishButton, i }) {
         data-testid={ `${i - ONE}-ingredient-name-and-measure` }
         onClick={ (e) => { toggleFinishButton(e); } }
         className="ingredient-checkbox"
+        style={ checked ? riskedIngredientStyle : {} }
         type="checkbox"
       />
     </label>
