@@ -12,6 +12,7 @@ function MealInProgress() {
   const [meal, setMeal] = useState({});
   const [copiedLink, setCopiedLink] = useState(false);
   const [recipeFinished, setRecipeFinished] = useState(false);
+  const [markedIngredients, setMarkedIngredients] = useState([]);
 
   const history = useHistory();
 
@@ -21,6 +22,14 @@ function MealInProgress() {
       setMeal(fetchedMeal);
     };
     getMeal();
+    toggleFinishButton(setRecipeFinished);
+  }, [id]);
+
+  useEffect(() => {
+    const inProgressRecipes = getLocalStorage('inProgressRecipes');
+    if (inProgressRecipes) {
+      setMarkedIngredients(inProgressRecipes.meals[id]);
+    }
   }, [id]);
 
   const { strMealThumb, strMeal, strCategory, strInstructions } = meal;
@@ -33,8 +42,9 @@ function MealInProgress() {
         ingredients.push(
           <IngredientCheckbox
             key={ meal[`strIngredient${i}`] }
-            foodType="meal"
+            foodType="meals"
             food={ meal }
+            isChecked={ markedIngredients.includes(i) }
             toggleFinishButton={ () => { toggleFinishButton(setRecipeFinished); } }
             i={ i }
           />,

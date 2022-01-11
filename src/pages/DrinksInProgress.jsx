@@ -12,6 +12,7 @@ function DrinkInProgress() {
   const [drink, setDrink] = useState({});
   const [copiedLink, setCopiedLink] = useState(false);
   const [recipeFinished, setRecipeFinished] = useState(false);
+  const [markedIngredients, setMarkedIngredients] = useState([]);
 
   const history = useHistory();
 
@@ -20,7 +21,15 @@ function DrinkInProgress() {
       const fetchedDrink = await fetchDrinkById(id);
       setDrink(fetchedDrink);
     };
+    toggleFinishButton(setRecipeFinished);
     getDrink();
+  }, [id]);
+
+  useEffect(() => {
+    const inProgressRecipes = getLocalStorage('inProgressRecipes');
+    if (inProgressRecipes) {
+      setMarkedIngredients(inProgressRecipes.cocktails[id]);
+    }
   }, [id]);
 
   const { strDrinkThumb, strDrink, strAlcoholic, strInstructions } = drink;
@@ -33,8 +42,9 @@ function DrinkInProgress() {
         ingredients.push(
           <IngredientCheckbox
             key={ drink[`strIngredient${i}`] }
-            foodType="drink"
+            foodType="cocktails"
             food={ drink }
+            isChecked={ markedIngredients.includes(i) }
             toggleFinishButton={ () => { toggleFinishButton(setRecipeFinished); } }
             i={ i }
           />,
