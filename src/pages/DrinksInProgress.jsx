@@ -4,6 +4,7 @@ import { fetchDrinkById } from '../helpers/fetchesFromAPI';
 import { getLocalStorage, saveLocalStorage } from '../helpers/manageLocalStorage';
 import FavoriteButton from '../components/FavoriteButton';
 import IngredientCheckbox from '../components/IngredientCheckbox';
+import toggleFinishButton from '../helpers/foodInProgressHelpers';
 
 function DrinkInProgress() {
   const { pathname } = useLocation();
@@ -24,16 +25,6 @@ function DrinkInProgress() {
 
   const { strDrinkThumb, strDrink, strAlcoholic, strInstructions } = drink;
 
-  const verifyCheckbox = () => {
-    const ingredients = document.getElementsByClassName('ingredient-checkbox');
-    const ingredientsArr = [];
-    for (let i = 0; i < ingredients.length; i += 1) {
-      ingredientsArr.push(ingredients[i].checked);
-    }
-    const allDone = ingredientsArr.every((element) => element === true);
-    setRecipeFinished(allDone);
-  };
-
   const getIngredientsList = () => {
     const ingredients = [];
     const MAX_INGREDIENTS = 20;
@@ -44,7 +35,7 @@ function DrinkInProgress() {
             key={ drink[`strIngredient${i}`] }
             foodType="drink"
             food={ drink }
-            verifyCheckbox={ verifyCheckbox }
+            toggleFinishButton={ () => { toggleFinishButton(setRecipeFinished); } }
             i={ i }
           />,
         );

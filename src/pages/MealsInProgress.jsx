@@ -4,6 +4,7 @@ import { fetchMealById } from '../helpers/fetchesFromAPI';
 import { getLocalStorage, saveLocalStorage } from '../helpers/manageLocalStorage';
 import FavoriteButton from '../components/FavoriteButton';
 import IngredientCheckbox from '../components/IngredientCheckbox';
+import toggleFinishButton from '../helpers/foodInProgressHelpers';
 
 function MealInProgress() {
   const { pathname } = useLocation();
@@ -24,17 +25,6 @@ function MealInProgress() {
 
   const { strMealThumb, strMeal, strCategory, strInstructions } = meal;
 
-  const verifyCheckbox = ({ target }) => {
-    const ingredients = document.getElementsByClassName('ingredient-checkbox');
-    console.log(target);
-    const ingredientsArr = [];
-    for (let i = 0; i < ingredients.length; i += 1) {
-      ingredientsArr.push(ingredients[i].checked);
-    }
-    const allDone = ingredientsArr.every((element) => element === true);
-    setRecipeFinished(allDone);
-  };
-
   const getIngredientsList = () => {
     const ingredients = [];
     const MAX_INGREDIENTS = 20;
@@ -45,7 +35,7 @@ function MealInProgress() {
             key={ meal[`strIngredient${i}`] }
             foodType="meal"
             food={ meal }
-            verifyCheckbox={ verifyCheckbox }
+            toggleFinishButton={ () => { toggleFinishButton(setRecipeFinished); } }
             i={ i }
           />,
         );

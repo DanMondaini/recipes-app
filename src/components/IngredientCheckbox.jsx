@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-function IngredientCheckbox({ foodType, food, verifyCheckbox, i }) {
+function IngredientCheckbox({ foodType, food, toggleFinishButton, i }) {
   const ONE = 1;
 
   const [checked, setChecked] = useState(false);
@@ -18,7 +18,7 @@ function IngredientCheckbox({ foodType, food, verifyCheckbox, i }) {
           id={ `strIngredient${i}` }
           data-testid={ `${i - ONE}-ingredient-name-and-measure` }
           onClick={ (e) => {
-            verifyCheckbox(e);
+            toggleFinishButton(e);
             setChecked(!checked);
           } }
           className="ingredient-checkbox"
@@ -40,7 +40,7 @@ function IngredientCheckbox({ foodType, food, verifyCheckbox, i }) {
         key={ i }
         id={ `strIngredient${i}` }
         data-testid={ `${i - ONE}-ingredient-name-and-measure` }
-        onClick={ (e) => { verifyCheckbox(e); } }
+        onClick={ (e) => { toggleFinishButton(e); } }
         className="ingredient-checkbox"
         type="checkbox"
       />
@@ -52,7 +52,7 @@ IngredientCheckbox.propTypes = {
   i: PropTypes.number.isRequired,
   food: PropTypes.objectOf(PropTypes.any).isRequired,
   foodType: PropTypes.string.isRequired,
-  verifyCheckbox: PropTypes.func.isRequired,
+  toggleFinishButton: PropTypes.func.isRequired,
 };
 
 export default IngredientCheckbox;
