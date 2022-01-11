@@ -4,6 +4,7 @@ import { fetchMealById } from '../helpers/fetchesFromAPI';
 import { getLocalStorage, saveLocalStorage } from '../helpers/manageLocalStorage';
 import FavoriteButton from '../components/FavoriteButton';
 import IngredientCheckbox from '../components/IngredientCheckbox';
+import toggleFinishButton from '../helpers/foodInProgressHelpers';
 
 function MealInProgress() {
   const { pathname } = useLocation();
@@ -11,6 +12,7 @@ function MealInProgress() {
   const [meal, setMeal] = useState({});
   const [copiedLink, setCopiedLink] = useState(false);
   const [recipeFinished, setRecipeFinished] = useState(false);
+  const [markedIngredients, setMarkedIngredients] = useState([]);
 
   const history = useHistory();
 
@@ -20,20 +22,17 @@ function MealInProgress() {
       setMeal(fetchedMeal);
     };
     getMeal();
+    toggleFinishButton(setRecipeFinished);
+  }, [id]);
+
+  useEffect(() => {
+    const inProgressRecipes = getLocalStorage('inProgressRecipes');
+    if (inProgressRecipes) {
+      setMarkedIngredients(inProgressRecipes.meals[id]);
+    }
   }, [id]);
 
   const { strMealThumb, strMeal, strCategory, strInstructions } = meal;
-
-  const verifyCheckbox = ({ target }) => {
-    const ingredients = document.getElementsByClassName('ingredient-checkbox');
-    console.log(target);
-    const ingredientsArr = [];
-    for (let i = 0; i < ingredients.length; i += 1) {
-      ingredientsArr.push(ingredients[i].checked);
-    }
-    const allDone = ingredientsArr.every((element) => element === true);
-    setRecipeFinished(allDone);
-  };
 
   const getIngredientsList = () => {
     const ingredients = [];
@@ -43,9 +42,10 @@ function MealInProgress() {
         ingredients.push(
           <IngredientCheckbox
             key={ meal[`strIngredient${i}`] }
-            foodType="meal"
+            foodType="meals"
             food={ meal }
-            verifyCheckbox={ verifyCheckbox }
+            isChecked={ markedIngredients.includes(i) }
+            toggleFinishButton={ () => { toggleFinishButton(setRecipeFinished); } }
             i={ i }
           />,
         );

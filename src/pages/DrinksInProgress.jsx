@@ -4,6 +4,7 @@ import { fetchDrinkById } from '../helpers/fetchesFromAPI';
 import { getLocalStorage, saveLocalStorage } from '../helpers/manageLocalStorage';
 import FavoriteButton from '../components/FavoriteButton';
 import IngredientCheckbox from '../components/IngredientCheckbox';
+import toggleFinishButton from '../helpers/foodInProgressHelpers';
 
 function DrinkInProgress() {
   const { pathname } = useLocation();
@@ -11,6 +12,7 @@ function DrinkInProgress() {
   const [drink, setDrink] = useState({});
   const [copiedLink, setCopiedLink] = useState(false);
   const [recipeFinished, setRecipeFinished] = useState(false);
+  const [markedIngredients, setMarkedIngredients] = useState([]);
 
   const history = useHistory();
 
@@ -19,20 +21,18 @@ function DrinkInProgress() {
       const fetchedDrink = await fetchDrinkById(id);
       setDrink(fetchedDrink);
     };
+    toggleFinishButton(setRecipeFinished);
     getDrink();
   }, [id]);
 
-  const { strDrinkThumb, strDrink, strAlcoholic, strInstructions } = drink;
-
-  const verifyCheckbox = () => {
-    const ingredients = document.getElementsByClassName('ingredient-checkbox');
-    const ingredientsArr = [];
-    for (let i = 0; i < ingredients.length; i += 1) {
-      ingredientsArr.push(ingredients[i].checked);
+  useEffect(() => {
+    const inProgressRecipes = getLocalStorage('inProgressRecipes');
+    if (inProgressRecipes) {
+      setMarkedIngredients(inProgressRecipes.cocktails[id]);
     }
-    const allDone = ingredientsArr.every((element) => element === true);
-    setRecipeFinished(allDone);
-  };
+  }, [id]);
+
+  const { strDrinkThumb, strDrink, strAlcoholic, strInstructions } = drink;
 
   const getIngredientsList = () => {
     const ingredients = [];
@@ -42,9 +42,10 @@ function DrinkInProgress() {
         ingredients.push(
           <IngredientCheckbox
             key={ drink[`strIngredient${i}`] }
-            foodType="drink"
+            foodType="cocktails"
             food={ drink }
-            verifyCheckbox={ verifyCheckbox }
+            isChecked={ markedIngredients.includes(i) }
+            toggleFinishButton={ () => { toggleFinishButton(setRecipeFinished); } }
             i={ i }
           />,
         );
