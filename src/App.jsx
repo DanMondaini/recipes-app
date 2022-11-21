@@ -51,3 +51,5 @@ function App() {
 }
 
 export default App;
+
+// Daniel Mondaini, João Matta, Samuel Pereira, Erickson Siqueira, Larissa Manzo
